@@ -18,7 +18,47 @@ app.get("/", (req, res) => {
 // 🔥 ESTA ES LA CLAVE
 app.post("/corregir", async (req, res) => {
   const { texto } = req.body;
+app.post("/imagen", upload.single("imagen"), async (req, res) => {
+  try {
+    const imagePath = req.file.path;
+    const imageBase64 = fs.readFileSync(imagePath, { encoding: "base64" });
 
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "user",
+            content: [
+              { type: "text", text: "Corrige este examen de lengua y analiza la sintaxis si aparece." },
+              {
+                type: "image_url",
+                image_url: {
+                  url: `data:image/jpeg;base64,${imageBase64}`
+                }
+              }
+            ]
+          }
+        ]
+      })
+    });
+
+    const data = await response.json();
+
+    res.json({
+      resultado: data.choices?.[0]?.message?.content || "Sin respuesta"
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error procesando imagen" });
+  }
+});
   try {
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
