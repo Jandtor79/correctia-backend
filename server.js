@@ -6,12 +6,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Ruta de prueba
+// Ruta base
 app.get("/", (req, res) => {
   res.send("Backend funcionando");
 });
 
-// Ruta de corrección
+// 🔥 ESTA ES LA CLAVE
 app.post("/corregir", async (req, res) => {
   const { texto } = req.body;
 
@@ -37,6 +37,7 @@ app.post("/corregir", async (req, res) => {
     res.json(data);
 
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Error en el servidor" });
   }
 });
