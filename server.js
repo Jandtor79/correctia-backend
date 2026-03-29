@@ -5,7 +5,9 @@ import fetch from "node-fetch";
 const app = express();
 app.use(cors());
 app.use(express.json());
-
+app.get("/", (req, res) => {
+  res.send("Backend funcionando");
+});
 let usos = {};
 
 app.post("/corregir", async (req, res) => {
