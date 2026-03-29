@@ -1,3 +1,7 @@
+import multer from "multer";
+import fs from "fs";
+
+const upload = multer({ dest: "uploads/" });
 import express from "express";
 import cors from "cors";
 import fetch from "node-fetch";
