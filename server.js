@@ -85,7 +85,57 @@ app.post("/imagen", upload.single("imagen"), async (req, res) => {
     res.status(500).json({ error: "Error en el servidor" });
   }
 });
+app.post("/audio", upload.single("audio"), async (req, res) => {
+  try {
+    const fs = await import("fs");
+    const path = req.file.path;
 
+    // 🧠 1. TRANSCRIPCIÓN (Whisper)
+    const transcriptionRes = await fetch("https://api.openai.com/v1/audio/transcriptions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+      },
+      body: (() => {
+        const formData = new FormData();
+        formData.append("file", fs.createReadStream(path));
+        formData.append("model", "whisper-1");
+        return formData;
+      })()
+    });
+
+    const transcriptionData = await transcriptionRes.json();
+    const texto = transcriptionData.text;
+
+    // 🧠 2. CORRECCIÓN
+    const correctionRes = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "user",
+            content: `Corrige esta expresión oral de un alumno, da feedback y nota:\n\n${texto}`
+          }
+        ]
+      })
+    });
+
+    const correctionData = await correctionRes.json();
+
+    res.json({
+      resultado: `🗣 Transcripción:\n${texto}\n\n${correctionData.choices?.[0]?.message?.content}`
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error procesando audio" });
+  }
+});
 app.listen(3000, () => {
   console.log("Servidor activo");
 });
