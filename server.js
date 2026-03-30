@@ -33,16 +33,35 @@ app.post("/corregir", async (req, res) => {
             role: "user",
             content: `Actúa como profesor de lengua en España.
 
-Corrige este examen.
+Corrige este examen de forma estructurada y VISUAL.
 
 INSTRUCCIONES:
-1. Detecta preguntas
-2. Corrige cada una
-3. Da nota sobre 10
-4. Calcula nota final
-5. Explica errores
+1. Detecta automáticamente cada pregunta
+2. Corrige cada respuesta
+3. Da una nota sobre 10 por pregunta
+4. Calcula una NOTA FINAL
+5. Explica los errores de forma clara
 
-Texto:
+FORMATO OBLIGATORIO EN HTML:
+
+- Usa <p> para separar cada bloque
+- Usa <strong> para títulos
+- Usa <span style="color:red"> para errores
+- Usa <span style="color:green"> para correcciones
+
+EJEMPLO DE FORMATO:
+
+<p><strong>Pregunta 1</strong></p>
+<p>Respuesta: ...</p>
+<p>Error: <span style="color:red">comio</span> → <span style="color:green">comió</span></p>
+<p>Nota: 7/10</p>
+
+<p><strong>NOTA FINAL: 7/10</strong></p>
+
+<p><strong>Comentario:</strong> Explicación clara para el alumno</p>
+
+Corrige este texto:
+
 ${texto}`
           }
         ]
