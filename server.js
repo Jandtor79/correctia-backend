@@ -1,23 +1,64 @@
 import multer from "multer";
 import fs from "fs";
-
-const upload = multer({ dest: "uploads/" });
 import express from "express";
 import cors from "cors";
 import fetch from "node-fetch";
+
+const upload = multer({ dest: "uploads/" });
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Ruta base
+// ✅ Ruta base
 app.get("/", (req, res) => {
   res.send("Backend funcionando");
 });
 
-// 🔥 ESTA ES LA CLAVE
+// 🔵 CORREGIR TEXTO (con nota por preguntas)
 app.post("/corregir", async (req, res) => {
-  const { texto } = req.body;
+  try {
+    const { texto } = req.body;
+
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "user",
+            content: `Actúa como profesor de lengua en España.
+
+Corrige este examen.
+
+INSTRUCCIONES:
+1. Detecta preguntas
+2. Corrige cada una
+3. Da nota sobre 10
+4. Calcula nota final
+5. Explica errores
+
+Texto:
+${texto}`
+          }
+        ]
+      })
+    });
+
+    const data = await response.json();
+    res.json(data);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error en el servidor" });
+  }
+});
+
+// 🖼️ IMAGEN
 app.post("/imagen", upload.single("imagen"), async (req, res) => {
   try {
     const imagePath = req.file.path;
@@ -35,7 +76,7 @@ app.post("/imagen", upload.single("imagen"), async (req, res) => {
           {
             role: "user",
             content: [
-              { type: "text", text: "Corrige este examen de lengua y analiza la sintaxis si aparece." },
+              { type: "text", text: "Corrige este examen por preguntas y pon nota." },
               {
                 type: "image_url",
                 image_url: {
@@ -59,55 +100,29 @@ app.post("/imagen", upload.single("imagen"), async (req, res) => {
     res.status(500).json({ error: "Error procesando imagen" });
   }
 });
-  try {
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [
-          {
-            role: "user",
-            content: `Corrige esta redacción como profesor de lengua en España. Da nota del 0 al 10 y explica errores:\n\n${texto}`
-          }
-        ]
-      })
-    });
 
-    const data = await response.json();
-    res.json(data);
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error en el servidor" });
-  }
-});
+// 🎤 AUDIO
 app.post("/audio", upload.single("audio"), async (req, res) => {
   try {
-    const fs = await import("fs");
     const path = req.file.path;
 
-    // 🧠 1. TRANSCRIPCIÓN (Whisper)
+    // 🧠 Transcripción
+    const formData = new FormData();
+    formData.append("file", fs.createReadStream(path));
+    formData.append("model", "whisper-1");
+
     const transcriptionRes = await fetch("https://api.openai.com/v1/audio/transcriptions", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
       },
-      body: (() => {
-        const formData = new FormData();
-        formData.append("file", fs.createReadStream(path));
-        formData.append("model", "whisper-1");
-        return formData;
-      })()
+      body: formData
     });
 
     const transcriptionData = await transcriptionRes.json();
     const texto = transcriptionData.text;
 
-    // 🧠 2. CORRECCIÓN
+    // 🧠 Corrección
     const correctionRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -119,7 +134,7 @@ app.post("/audio", upload.single("audio"), async (req, res) => {
         messages: [
           {
             role: "user",
-            content: `Corrige esta expresión oral de un alumno, da feedback y nota:\n\n${texto}`
+            content: `Corrige esta expresión oral, da feedback y nota:\n\n${texto}`
           }
         ]
       })
@@ -136,6 +151,8 @@ app.post("/audio", upload.single("audio"), async (req, res) => {
     res.status(500).json({ error: "Error procesando audio" });
   }
 });
+
+// 🚀 ARRANQUE
 app.listen(3000, () => {
   console.log("Servidor activo");
 });
