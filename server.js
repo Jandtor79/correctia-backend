@@ -1,4 +1,3 @@
-import FormData from "form-data";
 import multer from "multer";
 import fs from "fs";
 import express from "express";
