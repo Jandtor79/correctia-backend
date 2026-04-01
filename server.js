@@ -1,3 +1,4 @@
+import FormData from "form-data";
 import multer from "multer";
 import fs from "fs";
 import express from "express";
@@ -69,7 +70,9 @@ ${texto}`
     });
 
     const data = await response.json();
-    res.json(data);
+   res.json({
+  resultado: data.choices?.[0]?.message?.content || "Sin respuesta"
+});
 
   } catch (error) {
     console.error(error);
