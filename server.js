@@ -70,6 +70,7 @@ ${texto}`
     });
 
     const data = await response.json();
+    console.log("OPENAI RESPONSE:", data);
    res.json({
   resultado: data.choices?.[0]?.message?.content || "Sin respuesta"
 });
