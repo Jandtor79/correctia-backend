@@ -172,6 +172,8 @@ app.post("/audio", upload.single("audio"), async (req, res) => {
 });
 
 // 🚀 ARRANQUE
-app.listen(3000, () => {
-  console.log("Servidor activo");
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log("Servidor activo en puerto", PORT);
 });
