@@ -178,6 +178,6 @@ app.post("/audio", upload.single("audio"), async (req, res) => {
 // 🚀 ARRANQUE
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log("Servidor activo en puerto", PORT);
 });
