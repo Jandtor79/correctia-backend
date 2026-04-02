@@ -1,23 +1,24 @@
-app.set("trust proxy", 1);
-import FormData from "form-data";
-import multer from "multer";
-import fs from "fs";
 import express from "express";
 import cors from "cors";
+import multer from "multer";
+import fs from "fs";
 import fetch from "node-fetch";
 
-const upload = multer({ dest: "uploads/" });
-
 const app = express();
+
+app.set("trust proxy", 1);
+
 app.use(cors());
 app.use(express.json());
+
+const upload = multer({ dest: "uploads/" });
 
 // ✅ Ruta base
 app.get("/", (req, res) => {
   res.send("Backend funcionando");
 });
 
-// 🔵 CORREGIR TEXTO (con nota por preguntas)
+// 🔵 CORREGIR TEXTO
 app.post("/corregir", async (req, res) => {
   try {
     const { texto } = req.body;
@@ -44,23 +45,13 @@ INSTRUCCIONES:
 4. Calcula una NOTA FINAL
 5. Explica los errores de forma clara
 
-FORMATO OBLIGATORIO EN HTML:
+FORMATO HTML:
 
-- Usa <p> para separar cada bloque
-- Usa <strong> para títulos
-- Usa <span style="color:red"> para errores
-- Usa <span style="color:green"> para correcciones
+<p><strong>Pregunta</strong></p>
+<p>Error: <span style="color:red">...</span> → <span style="color:green">...</span></p>
+<p>Nota: X/10</p>
 
-EJEMPLO DE FORMATO:
-
-<p><strong>Pregunta 1</strong></p>
-<p>Respuesta: ...</p>
-<p>Error: <span style="color:red">comio</span> → <span style="color:green">comió</span></p>
-<p>Nota: 7/10</p>
-
-<p><strong>NOTA FINAL: 7/10</strong></p>
-
-<p><strong>Comentario:</strong> Explicación clara para el alumno</p>
+<p><strong>NOTA FINAL: X/10</strong></p>
 
 Corrige este texto:
 
@@ -71,10 +62,10 @@ ${texto}`
     });
 
     const data = await response.json();
-    console.log("OPENAI RESPONSE:", data);
-   res.json({
-  resultado: data.choices?.[0]?.message?.content || "Sin respuesta"
-});
+
+    res.json({
+      resultado: data.choices?.[0]?.message?.content || "Sin respuesta"
+    });
 
   } catch (error) {
     console.error(error);
@@ -130,9 +121,9 @@ app.post("/audio", upload.single("audio"), async (req, res) => {
   try {
     const path = req.file.path;
 
-    // 🧠 Transcripción
     const FormData = (await import("form-data")).default;
-const formData = new FormData();
+    const formData = new FormData();
+
     formData.append("file", fs.createReadStream(path));
     formData.append("model", "whisper-1");
 
@@ -147,7 +138,6 @@ const formData = new FormData();
     const transcriptionData = await transcriptionRes.json();
     const texto = transcriptionData.text;
 
-    // 🧠 Corrección
     const correctionRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
