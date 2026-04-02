@@ -131,7 +131,8 @@ app.post("/audio", upload.single("audio"), async (req, res) => {
     const path = req.file.path;
 
     // 🧠 Transcripción
-    const formData = new FormData();
+    const FormData = (await import("form-data")).default;
+const formData = new FormData();
     formData.append("file", fs.createReadStream(path));
     formData.append("model", "whisper-1");
 
