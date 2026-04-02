@@ -5,7 +5,9 @@ import fs from "fs";
 import fetch from "node-fetch";
 
 const app = express();
-
+app.get("/health", (req, res) => {
+  res.status(200).send("ok");
+});
 app.set("trust proxy", 1);
 
 app.use(cors());
