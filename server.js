@@ -65,10 +65,14 @@ ${texto}`
 
     const data = await response.json();
 
-    res.json({
-      resultado: data.choices?.[0]?.message?.content || "Sin respuesta"
-    });
+    if (data.error) {
+  console.error("❌ ERROR OPENAI:", data.error);
+  return res.json({ resultado: "❌ Error OpenAI: " + data.error.message });
+}
 
+res.json({
+  resultado: data.choices?.[0]?.message?.content || "⚠️ OpenAI no devolvió contenido"
+});
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error en el servidor" });
