@@ -1,5 +1,4 @@
 {
-  import FormData from "form-data";
   "name": "correctia-backend",
   "version": "1.0.0",
   "type": "module",
