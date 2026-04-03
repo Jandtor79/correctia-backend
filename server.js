@@ -74,7 +74,17 @@ FORMATO:
 <p>1. Explicación clara...</p>
 <p>2. Explicación clara...</p>
 
-Corrige este texto:
+Analiza el texto.
+
+Si el texto NO tiene sentido o es incoherente:
+- No inventes correcciones
+- Indica claramente: "Texto no evaluable"
+- No pongas errores falsos
+
+Si el texto es válido:
+- Corrige normalmente
+
+Texto:
 
 ${texto}`
           }
