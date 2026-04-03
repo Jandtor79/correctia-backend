@@ -50,7 +50,7 @@ INSTRUCCIONES:
 6. La puntuación es OPCIONAL: si el texto es muy breve o no evaluable, puedes omitir la nota     
 
 ⚠️ REGLAS IMPORTANTES:
-- Usa HTML limpio (sin ``` ni markdown)
+- Usa HTML limpio ( ni markdown)
 - Usa <p>, <strong>, <span style="color:red"> y <span style="color:green">
 - Las notas pueden incluir un decimal (ej: 5.5/10)
 - Si no hay suficiente contenido, no pongas nota
