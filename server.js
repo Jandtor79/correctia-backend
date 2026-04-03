@@ -65,15 +65,25 @@ Devuelve SIEMPRE este formato:
 📝 Texto original:
 ${texto}
 
-❌ Errores detectados:
-1. Error → Corrección
-2. Error → Corrección
+❌ Errores principales:
+
+Agrupa los errores por tipo:
+- Ortografía
+- Acentuación
+- Expresión
+- Abreviaturas
+
+Explica cada tipo con ejemplos del texto.
 
 📊 Nota final: X.X / 10
 
 🧠 Explicación:
 1. Explicación clara
 2. Explicación clara
+
+🧠 Recomendación del profesor:
+
+Da consejos claros, prácticos y motivadores para mejorar.
 
 REGLAS:
 - La nota puede tener un decimal (ej: 6.5)
