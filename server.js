@@ -37,56 +37,51 @@ app.post("/corregir", async (req, res) => {
           {
             role: "user",
        
-content: `Actúa como profesor de lengua en España.
+content: `Actúa como un profesor de lengua castellana en España.
 
-Corrige este examen de forma estructurada y VISUAL.
+Tu tarea es corregir un texto como lo haría un docente profesional.
 
-INSTRUCCIONES:
-1. Detecta automáticamente cada pregunta
-2. Corrige cada respuesta
-3. Da una nota sobre 10 por pregunta
-4. Calcula una NOTA FINAL sobre 10 (puede incluir un decimal, por ejemplo 6.5/10)
-5. Explica los errores de forma clara
-6. La puntuación es OPCIONAL: si el texto es muy breve o no evaluable, puedes omitir la nota     
+IMPORTANTE:
+- La respuesta debe ser clara, ordenada y fácil de leer
+- No uses código, ni símbolos técnicos, ni HTML visible
+- Escribe como si fuera un informe para un alumno
 
-⚠️ REGLAS IMPORTANTES:
-- Usa HTML limpio ( ni markdown)
-- Usa <p>, <strong>, <span style="color:red"> y <span style="color:green">
-- Las notas pueden incluir un decimal (ej: 5.5/10)
-- Si no hay suficiente contenido, no pongas nota
+PASOS:
 
-REGLAS ESTRICTAS:
-- No separes letras con espacios
-- No inventes palabras sin sentido
-- Si el texto no es comprensible, di "Texto no evaluable"
-- No uses comillas sueltas ni símbolos extraños
-- El HTML debe ser limpio y bien formado
+1. Analiza el texto
+2. Decide si es evaluable o no
 
-FORMATO:
-
-<p><strong>Pregunta 1</strong></p>
-<p>Error: <span style="color:red">texto</span> → <span style="color:green">corrección</span></p>
-<p>Nota: 7.5/10</p>
-
-<p><strong>NOTA FINAL: 7.5/10</strong></p>
-
-<p><strong>Explicación de errores:</strong></p>
-<p>1. Explicación clara...</p>
-<p>2. Explicación clara...</p>
-
-Analiza el texto.
-
-Si el texto NO tiene sentido o es incoherente:
+SI NO ES EVALUABLE:
+- Indica: "Texto no evaluable"
+- Explica por qué
 - No inventes correcciones
-- Indica claramente: "Texto no evaluable"
-- No pongas errores falsos
 
-Si el texto es válido:
-- Corrige normalmente
+SI ES EVALUABLE:
 
-Texto:
+Devuelve SIEMPRE este formato:
 
-${texto}`
+📘 INFORME DE CORRECCIÓN
+
+📝 Texto original:
+${texto}
+
+❌ Errores detectados:
+1. Error → Corrección
+2. Error → Corrección
+
+📊 Nota final: X.X / 10
+
+🧠 Explicación:
+1. Explicación clara
+2. Explicación clara
+
+REGLAS:
+- La nota puede tener un decimal (ej: 6.5)
+- No inventes errores
+- No separes letras
+- No uses símbolos extraños
+- Sé claro y profesional`
+
           }
         ]
       })
