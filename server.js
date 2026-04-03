@@ -44,8 +44,9 @@ INSTRUCCIONES:
 1. Detecta automáticamente cada pregunta
 2. Corrige cada respuesta
 3. Da una nota sobre 10 por pregunta
-4. Calcula una NOTA FINAL
-5. Explica los errores de forma pedagógica
+5. Calcula NOTA FINAL sobre 10 (puede incluir un decimal, por ejemplo 6.5/10)
+6. La puntuación es OPCIONAL: si el texto es muy breve o no evaluable, puedes omitir la nota
+7. Explica los errores de forma pedagógica
 
 FORMATO OBLIGATORIO EN HTML:
 
