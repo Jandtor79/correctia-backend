@@ -55,6 +55,13 @@ INSTRUCCIONES:
 - Las notas pueden incluir un decimal (ej: 5.5/10)
 - Si no hay suficiente contenido, no pongas nota
 
+REGLAS ESTRICTAS:
+- No separes letras con espacios
+- No inventes palabras sin sentido
+- Si el texto no es comprensible, di "Texto no evaluable"
+- No uses comillas sueltas ni símbolos extraños
+- El HTML debe ser limpio y bien formado
+
 FORMATO:
 
 <p><strong>Pregunta 1</strong></p>
