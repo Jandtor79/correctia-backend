@@ -36,43 +36,36 @@ app.post("/corregir", async (req, res) => {
         messages: [
           {
             role: "user",
-        Actúa como profesor de lengua en España.
+       
+content: `Actúa como profesor de lengua en España.
 
-Corrige este examen de forma estructurada, clara y visual.
+Corrige este examen de forma estructurada y VISUAL.
 
 INSTRUCCIONES:
 1. Detecta automáticamente cada pregunta
 2. Corrige cada respuesta
 3. Da una nota sobre 10 por pregunta
-5. Calcula NOTA FINAL sobre 10 (puede incluir un decimal, por ejemplo 6.5/10)
-6. La puntuación es OPCIONAL: si el texto es muy breve o no evaluable, puedes omitir la nota
-7. Explica los errores de forma pedagógica
+4. Calcula una NOTA FINAL sobre 10 (puede incluir un decimal, por ejemplo 6.5/10)
+5. Explica los errores de forma clara
+6. La puntuación es OPCIONAL: si el texto es muy breve o no evaluable, puedes omitir la nota     
 
-FORMATO OBLIGATORIO EN HTML:
-
-- Usa <p> para separar bloques
-- Usa <strong> para títulos
-- Usa <span style="color:red"> para errores
-- Usa <span style="color:green"> para correcciones
-
-EXPLICACIÓN DE ERRORES (MUY IMPORTANTE):
-
-- Haz una lista numerada
-- Cada error en un punto separado
-- Explicación clara y breve (como profesor)
-- Sin símbolos markdown (no usar ### ni **)
+⚠️ REGLAS IMPORTANTES:
+- Usa HTML limpio (sin ``` ni markdown)
+- Usa <p>, <strong>, <span style="color:red"> y <span style="color:green">
+- Las notas pueden incluir un decimal (ej: 5.5/10)
+- Si no hay suficiente contenido, no pongas nota
 
 FORMATO:
 
+<p><strong>Pregunta 1</strong></p>
+<p>Error: <span style="color:red">texto</span> → <span style="color:green">corrección</span></p>
+<p>Nota: 7.5/10</p>
+
+<p><strong>NOTA FINAL: 7.5/10</strong></p>
+
 <p><strong>Explicación de errores:</strong></p>
-
-<ol>
-<li><strong>Ortografía:</strong> Explicación clara del error</li>
-<li><strong>Gramática:</strong> Explicación clara del error</li>
-<li><strong>Acentuación:</strong> Explicación clara del error</li>
-</ol>
-
-Devuelve SOLO HTML limpio, sin texto fuera del formato.
+<p>1. Explicación clara...</p>
+<p>2. Explicación clara...</p>
 
 Corrige este texto:
 
