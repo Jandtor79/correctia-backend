@@ -90,7 +90,9 @@ REGLAS:
 - No inventes errores
 - No separes letras
 - No uses símbolos extraños
-- Sé claro y profesional`
+- Sé claro y profesional
+- Usa saltos de línea entre secciones
+- Deja una línea en blanco entre bloques`
 
           }
         ]
