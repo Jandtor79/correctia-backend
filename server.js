@@ -3,6 +3,7 @@ import cors from "cors";
 import multer from "multer";
 import fs from "fs";
 import fetch from "node-fetch";
+import pdfParse from "pdf-parse";
 
 const subirPDF = async (file) => {
   const formData = new FormData();
