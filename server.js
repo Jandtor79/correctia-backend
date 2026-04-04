@@ -4,6 +4,28 @@ import multer from "multer";
 import fs from "fs";
 import fetch from "node-fetch";
 
+const subirPDF = async (file) => {
+  const formData = new FormData();
+  formData.append("pdf", file);
+
+  setLoading(true);
+
+  try {
+    const res = await fetch("https://correctia-backend-production.up.railway.app/pdf", {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await res.json();
+
+    setResultado(data.resultado || "");
+  } catch {
+    setResultado("Error PDF");
+  }
+
+  setLoading(false);
+};
+
 const app = express();
 app.get("/health", (req, res) => {
   res.status(200).send("ok");
