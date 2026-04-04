@@ -37,62 +37,54 @@ app.post("/corregir", async (req, res) => {
           {
             role: "user",
        
-content: `Actúa como un profesor de lengua castellana en España.
+content: `Actúa como profesor de Lengua Castellana en España.
 
-Tu tarea es corregir un texto como lo haría un docente profesional.
+Evalúa un examen completo.
 
-IMPORTANTE:
-- La respuesta debe ser clara, ordenada y fácil de leer
-- No uses código, ni símbolos técnicos, ni HTML visible
-- Escribe como si fuera un informe para un alumno
+TAREAS:
+1. Detecta automáticamente cada pregunta
+2. Identifica la respuesta del alumno
+3. Corrige cada respuesta
+4. Da una puntuación por pregunta (puede tener decimal)
+5. Calcula una NOTA FINAL sobre 10
+6. Explica los errores de forma clara y pedagógica
 
-PASOS:
+FORMATO:
 
-1. Analiza el texto
-2. Decide si es evaluable o no
+📘 INFORME DE EVALUACIÓN
 
-SI NO ES EVALUABLE:
-- Indica: "Texto no evaluable"
-- Explica por qué
-- No inventes correcciones
-
-SI ES EVALUABLE:
-
-Devuelve SIEMPRE este formato:
-
-📘 INFORME DE CORRECCIÓN
-
-📝 Texto original:
+📝 Respuestas del alumno:
 ${texto}
 
-❌ Errores principales:
+---
 
-Agrupa los errores por tipo:
-- Ortografía
-- Acentuación
-- Expresión
-- Abreviaturas
+📊 Evaluación por preguntas:
 
-Explica cada tipo con ejemplos del texto.
+Pregunta 1:
+- Respuesta del alumno: ...
+- Corrección: ...
+- Nota: X.X / 10
+
+Pregunta 2:
+- Respuesta del alumno: ...
+- Corrección: ...
+- Nota: X.X / 10
+
+---
 
 📊 Nota final: X.X / 10
 
-🧠 Explicación:
-1. Explicación clara
-2. Explicación clara
+---
 
-🧠 Recomendación del profesor:
-
-Da consejos claros, prácticos y motivadores para mejorar.
+🧠 Comentario del profesor:
+Explicación clara, breve y útil para mejorar.
 
 REGLAS:
-- La nota puede tener un decimal (ej: 6.5)
-- No inventes errores
-- No separes letras
-- No uses símbolos extraños
-- Sé claro y profesional
-- Usa saltos de línea entre secciones
-- Deja una línea en blanco entre bloques`
+- No inventes contenido
+- Sé justo como un profesor real
+- Usa lenguaje claro y profesional
+- Si falta información, indícalo`
+
 
           }
         ]
