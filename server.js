@@ -125,11 +125,15 @@ app.post("/imagen", upload.single("imagen"), async (req, res) => {
           {
             role: "user",
             content: [
-              { type: "text", text: "Corrige este examen por preguntas y pon nota." },
-              {
-                type: "image_url",
-                image_url: {
-                  url: `data:image/jpeg;base64,${imageBase64}`
+              { type: "text", text: `Extrae TODO el texto de este examen y después corrígelo.
+
+INSTRUCCIONES:
+1. Transcribe primero el contenido
+2. Después corrige por preguntas
+3. Pon nota por pregunta
+4. Nota final sobre 10
+
+Formato claro y estructurado`
                 }
               }
             ]
