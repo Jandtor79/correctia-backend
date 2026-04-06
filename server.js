@@ -148,7 +148,9 @@ app.post("/imagen", upload.single("imagen"), async (req, res) => {
           {
             role: "user",
             content: [
-              { type: "text", text: `Extrae TODO el texto de este examen y después corrígelo.
+              {
+                type: "text",
+                text: `Extrae TODO el texto de este examen y después corrígelo.
 
 INSTRUCCIONES:
 1. Transcribe primero el contenido
@@ -157,6 +159,11 @@ INSTRUCCIONES:
 4. Nota final sobre 10
 
 Formato claro y estructurado`
+              },
+              {
+                type: "image_url",
+                image_url: {
+                  url: `data:image/jpeg;base64,${imageBase64}`
                 }
               }
             ]
@@ -170,12 +177,131 @@ Formato claro y estructurado`
     res.json({
       resultado: data.choices?.[0]?.message?.content || "Sin respuesta"
     });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error procesando imagen" });
   }
 });
+
+Y además, borra esto del backend si todavía lo tienes arriba del archivo, porque eso es código de frontend y no debe estar en server.js:
+
+const subirPDF = async (file) => {
+  const formData = new FormData();
+  formData.append("pdf", file);
+
+  setLoading(true);
+
+  try {
+    const res = await fetch("https://correctia-backend-production.up.railway.app/pdf", {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await res.json();
+
+    setResultado(data.resultado || "");
+  } catch {
+    setResultado("Error PDF");
+  }
+
+  setLoading(false);
+};
+
+La causa exacta era esta estructura mal cerrada dentro de content:
+
+content: [
+  { ... }
+  }   // sobra una llave
+]
+
+Después de pegar el bloque correcto:
+
+guarda en GitHub
+redeploy en Railway
+prueba otra vez
+
+Si quieres, te pego también el server.js completo ya limpio.
+
+acepta un decimal
+
+Perfecto 👍 vamos a dejar eso fino.
+
+🎯 OBJETIVO
+
+👉 Que la nota acepte decimales:
+
+Ejemplos válidos:
+
+7/10
+6.5/10
+8.75/10
+🔧 1. FRONTEND (MUY IMPORTANTE)
+
+Ahora tienes esto:
+
+const match = contenido.match(/(\d+)\/10/);
+
+👉 ❌ SOLO detecta enteros
+
+✅ CAMBIA POR ESTO
+const match = contenido.match(/(\d+(\.\d+)?)\/10/);
+🧠 QUÉ HACE
+\d+ → número entero
+(\.\d+)? → decimal opcional
+
+👉 Resultado:
+✔ 7
+✔ 7.5
+✔ 7.25
+
+🔧 2. BACKEND (PROMPT)
+
+Ya casi lo tienes bien, pero asegúrate de incluir esto claramente:
+
+La nota puede incluir decimales (por ejemplo 6.5/10)
+🔧 3. PDF (OPCIONAL)
+
+No hace falta cambiar nada si ya usas:
+
+doc.text(`Nota final: ${nota}/10`, ...)
+
+👉 ya mostrará decimales automáticamente
+
+💥 RESULTADO
+
+Antes:
+
+7/10
+
+Ahora:
+
+6.5/10
+7.25/10
+🚀 EXTRA PRO (RECOMENDADO)
+
+Si quieres que SIEMPRE tenga un decimal:
+
+const notaFormateada = parseFloat(nota).toFixed(1);
+
+👉 Ejemplo:
+
+7 → 7.0
+6.5 → 6.5
+💬 SIGUIENTE NIVEL
+
+Si quieres subir mucho el nivel:
+
+👉 dime “nota por criterios”
+
+y te hago:
+
+🔥 desglose:
+
+ortografía: 2.5
+gramática: 3.0
+coherencia: 2.0
+
+👉 eso ya es nivel evaluación real de profesor 💥
 
 // 🎤 AUDIO
 app.post("/audio", upload.single("audio"), async (req, res) => {
