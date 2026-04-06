@@ -5,24 +5,24 @@ import fs from "fs";
 import fetch from "node-fetch";
 import pdfParse from "pdf-parse";
 
-
 const app = express();
+
 app.get("/health", (req, res) => {
   res.status(200).send("ok");
 });
-app.set("trust proxy", 1);
 
+app.set("trust proxy", 1);
 app.use(cors());
 app.use(express.json());
 
 const upload = multer({ dest: "uploads/" });
 
-// ✅ Ruta base
+// Ruta base
 app.get("/", (req, res) => {
   res.send("Backend funcionando");
 });
 
-// 🔵 CORREGIR TEXTO
+// CORREGIR TEXTO
 app.post("/corregir", async (req, res) => {
   try {
     const { texto } = req.body;
@@ -30,7 +30,7 @@ app.post("/corregir", async (req, res) => {
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
@@ -38,8 +38,7 @@ app.post("/corregir", async (req, res) => {
         messages: [
           {
             role: "user",
-       
-content: `Actúa como profesor de Lengua Castellana en España.
+            content: `Actúa como profesor de Lengua Castellana en España.
 
 Evalúa un examen completo.
 
@@ -53,14 +52,12 @@ TAREAS:
 
 FORMATO:
 
-📘 INFORME DE EVALUACIÓN
+INFORME DE EVALUACIÓN
 
-📝 Respuestas del alumno:
+Respuestas del alumno:
 ${texto}
 
----
-
-📊 Evaluación por preguntas:
+Evaluación por preguntas:
 
 Pregunta 1:
 - Respuesta del alumno: ...
@@ -72,13 +69,9 @@ Pregunta 2:
 - Corrección: ...
 - Nota: X.X / 10
 
----
+Nota final: X.X / 10
 
-📊 Nota final: X.X / 10
-
----
-
-🧠 Comentario del profesor:
+Comentario del profesor:
 Explicación clara, breve y útil para mejorar.
 
 REGLAS:
@@ -86,8 +79,6 @@ REGLAS:
 - Sé justo como un profesor real
 - Usa lenguaje claro y profesional
 - Si falta información, indícalo`
-
-
           }
         ]
       })
@@ -96,20 +87,22 @@ REGLAS:
     const data = await response.json();
 
     if (data.error) {
-  console.error("❌ ERROR OPENAI:", data.error);
-  return res.json({ resultado: "❌ Error OpenAI: " + data.error.message });
-}
+      console.error("ERROR OPENAI:", data.error);
+      return res.json({
+        resultado: "Error OpenAI: " + data.error.message
+      });
+    }
 
-res.json({
-  resultado: data.choices?.[0]?.message?.content || "⚠️ OpenAI no devolvió contenido"
-});
+    res.json({
+      resultado: data.choices?.[0]?.message?.content || "OpenAI no devolvió contenido"
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error en el servidor" });
   }
 });
 
-// 🖼️ IMAGEN
+// IMAGEN
 app.post("/imagen", upload.single("imagen"), async (req, res) => {
   try {
     const imagePath = req.file.path;
@@ -118,7 +111,7 @@ app.post("/imagen", upload.single("imagen"), async (req, res) => {
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
@@ -162,31 +155,47 @@ Formato claro y estructurado`
   }
 });
 
-
-const subirPDF = async (file) => {
-  const formData = new FormData();
-  formData.append("pdf", file);
-
-  setLoading(true);
-
+// PDF
+app.post("/pdf", upload.single("pdf"), async (req, res) => {
   try {
-    const res = await fetch("https://correctia-backend-production.up.railway.app/pdf", {
+    const dataBuffer = fs.readFileSync(req.file.path);
+    const pdfData = await pdfParse(dataBuffer);
+    const texto = pdfData.text;
+
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
-      body: formData
+      headers: {
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "user",
+            content: `Actúa como profesor de Lengua Castellana en España.
+
+Corrige este examen extraído de un PDF.
+
+Texto del examen:
+${texto}`
+          }
+        ]
+      })
     });
 
-    const data = await res.json();
+    const data = await response.json();
 
-    setResultado(data.resultado || "");
-  } catch {
-    setResultado("Error PDF");
+    res.json({
+      resultado: data.choices?.[0]?.message?.content || "Sin respuesta"
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error procesando PDF" });
   }
+});
 
-  setLoading(false);
-};
-
-
-// 🎤 AUDIO
+// AUDIO
 app.post("/audio", upload.single("audio"), async (req, res) => {
   try {
     const path = req.file.path;
@@ -200,7 +209,7 @@ app.post("/audio", upload.single("audio"), async (req, res) => {
     const transcriptionRes = await fetch("https://api.openai.com/v1/audio/transcriptions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
       },
       body: formData
     });
@@ -211,7 +220,7 @@ app.post("/audio", upload.single("audio"), async (req, res) => {
     const correctionRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
@@ -219,7 +228,9 @@ app.post("/audio", upload.single("audio"), async (req, res) => {
         messages: [
           {
             role: "user",
-            content: `Corrige esta expresión oral, da feedback y nota:\n\n${texto}`
+            content: `Corrige esta expresión oral, da feedback y nota:
+
+${texto}`
           }
         ]
       })
@@ -228,17 +239,16 @@ app.post("/audio", upload.single("audio"), async (req, res) => {
     const correctionData = await correctionRes.json();
 
     res.json({
-      resultado: `🗣 Transcripción:\n${texto}\n\n${correctionData.choices?.[0]?.message?.content}`
+      resultado: `Transcripción:\n${texto}\n\n${correctionData.choices?.[0]?.message?.content || ""}`
     });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error procesando audio" });
   }
 });
 
-// 🚀 ARRANQUE
-const PORT = process.env.PORT;
+// ARRANQUE
+const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, "0.0.0.0", () => {
   console.log("Servidor activo en puerto", PORT);
