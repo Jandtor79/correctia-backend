@@ -4,6 +4,33 @@ import multer from "multer";
 import fs from "fs";
 import fetch from "node-fetch";
 import pdfParse from "pdf-parse";
+const subirPDF = async (file) => {
+  const formData = new FormData();
+  formData.append("pdf", file);
+
+  setLoading(true);
+
+  try {
+    const res = await fetch("https://correctia-backend-production.up.railway.app/pdf", {
+      method: "POST",
+      body: formData
+    });
+
+    const data = await res.json();
+
+    const contenido = data.resultado || "";
+
+    const match = contenido.match(/(\d+(\.\d+)?)\/10/);
+    setNota(match ? match[1] : "");
+    setResultado(contenido);
+
+  } catch (error) {
+    console.error(error);
+    setResultado("Error PDF");
+  }
+
+  setLoading(false);
+};
 
 const app = express();
 
