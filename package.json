@@ -1,4 +1,4 @@
-npm install pdf-parse
+
 {
   "name": "correctia-backend",
   "version": "1.0.0",
@@ -16,4 +16,3 @@ npm install pdf-parse
   "pdf-parse": "^1.1.1"
 }
 }
-add pdf-parse
