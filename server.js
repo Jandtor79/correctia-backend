@@ -223,6 +223,19 @@ ${texto}`
 });
 
 // AUDIO
+<label style={styles.uploadLabel}>
+  📄 PDF
+  <input
+    type="file"
+    accept="application/pdf"
+    style={styles.hiddenInput}
+    onChange={(e) => {
+      const file = e.target.files?.[0];
+      if (file) subirPDF(file);
+    }}
+  />
+</label>
+
 app.post("/audio", upload.single("audio"), async (req, res) => {
   try {
     const path = req.file.path;
