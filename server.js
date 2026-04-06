@@ -162,7 +162,6 @@ Formato claro y estructurado`
   }
 });
 
-Y además, borra esto del backend si todavía lo tienes arriba del archivo, porque eso es código de frontend y no debe estar en server.js:
 
 const subirPDF = async (file) => {
   const formData = new FormData();
