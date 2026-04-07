@@ -84,7 +84,19 @@ REGLAS:
         ]
       })
     });
+const promptSintaxis = `Actúa como profesor experto de Lengua Castellana en España, especializado en análisis sintáctico.
 
+Corrige un examen de sintaxis con rigor académico.
+
+📘 INFORME DE SINTAXIS
+
+Corrige este examen:
+
+${texto}`;
+    const esSintaxis =
+  texto.toLowerCase().includes("sintáct") ||
+  texto.toLowerCase().includes("analiza") ||
+  texto.toLowerCase().includes("oración");
     const data = await response.json();
 
     if (data.error) {
