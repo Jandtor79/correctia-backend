@@ -119,7 +119,7 @@ if (modo === "examen") prompt = promptExamen;
         messages: [
           {
             role: "user",
-            content: `Actúa como profesor de Lengua Castellana en España.
+            content: prompt
 
 Evalúa un examen completo.
 
