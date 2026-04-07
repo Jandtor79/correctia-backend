@@ -170,12 +170,11 @@ REGLAS:
   }
 });
 
-📘 INFORME DE SINTAXIS
 
 Corrige este examen:
 
 ${texto}`;
-    const esSintaxis =
+    const esSintaxis = 📘 INFORME DE SINTAXIS
   texto.toLowerCase().includes("sintáct") ||
   texto.toLowerCase().includes("analiza") ||
   texto.toLowerCase().includes("oración");
