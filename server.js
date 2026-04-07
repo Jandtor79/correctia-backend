@@ -5,7 +5,6 @@ import fs from "fs";
 import fetch from "node-fetch";
 import pdfParse from "pdf-parse";
 
-
 const app = express();
 
 app.get("/health", (req, res) => {
@@ -18,7 +17,6 @@ app.use(express.json());
 
 const upload = multer({ dest: "uploads/" });
 
-// Ruta base
 app.get("/", (req, res) => {
   res.send("Backend funcionando");
 });
@@ -170,32 +168,6 @@ REGLAS:
   }
 });
 
-
-Corrige este examen:
-
-${texto}`;
-    const esSintaxis = 📘 INFORME DE SINTAXIS
-  texto.toLowerCase().includes("sintáct") ||
-  texto.toLowerCase().includes("analiza") ||
-  texto.toLowerCase().includes("oración");
-    const data = await response.json();
-
-    if (data.error) {
-      console.error("ERROR OPENAI:", data.error);
-      return res.json({
-        resultado: "Error OpenAI: " + data.error.message
-      });
-    }
-
-    res.json({
-      resultado: data.choices?.[0]?.message?.content || "OpenAI no devolvió contenido"
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error en el servidor" });
-  }
-});
-
 // IMAGEN
 app.post("/imagen", upload.single("imagen"), async (req, res) => {
   try {
@@ -290,7 +262,6 @@ ${texto}`
 });
 
 // AUDIO
-
 app.post("/audio", upload.single("audio"), async (req, res) => {
   try {
     const path = req.file.path;
@@ -342,7 +313,6 @@ ${texto}`
   }
 });
 
-// ARRANQUE
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, "0.0.0.0", () => {
