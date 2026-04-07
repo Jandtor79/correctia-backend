@@ -179,10 +179,10 @@ REGLAS:
 let prompt = promptGeneral;
 
     if (modo === "sintaxis") prompt = promptSintaxis;
+    if (modo === "sintaxis_visual") prompt = promptSintaxisVisual;
     if (modo === "redaccion") prompt = promptRedaccion;
     if (modo === "comentario") prompt = promptComentario;
     if (modo === "examen") prompt = promptExamen;
-    if (modo === "sintaxis_visual") prompt = promptSintaxisVisual;
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
