@@ -26,13 +26,13 @@ app.post("/corregir", async (req, res) => {
   try {
     const { texto, modo } = req.body;
 
-    const promptGeneral = `Actúa como profesor de Lengua Castellana en España.
+const promptGeneral = `Actúa como profesor de Lengua Castellana en España.
 
 Corrige el siguiente texto o examen:
 
 ${texto}`;
 
-    const promptSintaxis = `Actúa como profesor experto de Lengua Castellana en España, especializado en análisis sintáctico.
+const promptSintaxis = `Actúa como profesor experto de Lengua Castellana en España, especializado en análisis sintáctico.
 
 Corrige un examen de sintaxis con rigor académico.
 
@@ -60,14 +60,16 @@ Debes:
 - ofrecer el análisis correcto final de forma ordenada
 
 Si el esquema es incompleto, confuso o ilegible, indícalo expresamente y corrige solo lo que pueda inferirse con seguridad.
+
 Corrige este examen:
+
+${texto}`;
 
 const promptSintaxisVisual = `Actúa como profesor experto de Lengua Castellana en España, especializado en análisis sintáctico.
 
 El alumno ha realizado un análisis sintáctico en formato visual (cajones, esquemas, bloques o etiquetas).
 
 TU TAREA:
-
 1. Interpreta el esquema del alumno
 2. Reconstruye mentalmente la estructura sintáctica
 3. Identifica qué función ha asignado a cada elemento
@@ -82,29 +84,26 @@ IMPORTANTE:
 - Corrige como un profesor de secundaria en España
 
 FORMATO:
+INFORME DE SINTAXIS (ESQUEMA)
 
-📘 INFORME DE SINTAXIS (ESQUEMA)
-
-🔍 Interpretación del análisis del alumno:
+Interpretación del análisis del alumno:
 ...
 
-❌ Errores detectados:
+Errores detectados:
 ...
 
-✅ Corrección:
+Corrección:
 ...
 
-📊 Nota: X.X / 10
+Nota: X.X / 10
 
-🧠 Explicación:
+Explicación:
 ...
 
 Texto del alumno:
 ${texto}`;
 
-${texto}`;
-
-    const promptRedaccion = `Actúa como profesor de Lengua Castellana en España.
+const promptRedaccion = `Actúa como profesor de Lengua Castellana en España.
 
 Corrige una redacción de alumno.
 
@@ -119,7 +118,7 @@ Texto:
 
 ${texto}`;
 
-    const promptComentario = `Actúa como profesor de Lengua Castellana en España.
+const promptComentario = `Actúa como profesor de Lengua Castellana en España.
 
 Corrige un comentario de texto.
 
@@ -135,7 +134,7 @@ Texto del alumno:
 
 ${texto}`;
 
-    const promptExamen = `Actúa como profesor de Lengua Castellana en España.
+const promptExamen = `Actúa como profesor de Lengua Castellana en España.
 
 Evalúa un examen completo.
 
@@ -152,7 +151,7 @@ FORMATO:
 INFORME DE EVALUACIÓN
 
 Respuestas del alumno:
-${texto}`;
+${texto}
 
 Evaluación por preguntas:
 
@@ -177,7 +176,7 @@ REGLAS:
 - Usa lenguaje claro y profesional
 - Si falta información, indícalo`;
 
-    let prompt = promptGeneral;
+let prompt = promptGeneral;
 
     if (modo === "sintaxis") prompt = promptSintaxis;
     if (modo === "redaccion") prompt = promptRedaccion;
