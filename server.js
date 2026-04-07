@@ -62,6 +62,46 @@ Debes:
 Si el esquema es incompleto, confuso o ilegible, indícalo expresamente y corrige solo lo que pueda inferirse con seguridad.
 Corrige este examen:
 
+const promptSintaxisVisual = `Actúa como profesor experto de Lengua Castellana en España, especializado en análisis sintáctico.
+
+El alumno ha realizado un análisis sintáctico en formato visual (cajones, esquemas, bloques o etiquetas).
+
+TU TAREA:
+
+1. Interpreta el esquema del alumno
+2. Reconstruye mentalmente la estructura sintáctica
+3. Identifica qué función ha asignado a cada elemento
+4. Comprueba si es correcto
+5. Detecta errores de clasificación o relación
+6. Explica los errores de forma clara
+7. Proporciona el análisis correcto completo
+
+IMPORTANTE:
+- No te limites al texto literal: interpreta la estructura
+- Si algo es ambiguo, indícalo
+- Corrige como un profesor de secundaria en España
+
+FORMATO:
+
+📘 INFORME DE SINTAXIS (ESQUEMA)
+
+🔍 Interpretación del análisis del alumno:
+...
+
+❌ Errores detectados:
+...
+
+✅ Corrección:
+...
+
+📊 Nota: X.X / 10
+
+🧠 Explicación:
+...
+
+Texto del alumno:
+${texto}`;
+
 ${texto}`;
 
     const promptRedaccion = `Actúa como profesor de Lengua Castellana en España.
@@ -143,6 +183,7 @@ REGLAS:
     if (modo === "redaccion") prompt = promptRedaccion;
     if (modo === "comentario") prompt = promptComentario;
     if (modo === "examen") prompt = promptExamen;
+    if (modo === "sintaxis_visual") prompt = promptSintaxisVisual;
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
