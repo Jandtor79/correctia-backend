@@ -26,14 +26,15 @@ app.get("/", (req, res) => {
 // CORREGIR TEXTO
 app.post("/corregir", async (req, res) => {
   try {
-    const { texto } = req.body;
-const promptGeneral = `Actúa como profesor de Lengua Castellana en España.
+    const { texto, modo } = req.body;
+
+    const promptGeneral = `Actúa como profesor de Lengua Castellana en España.
 
 Corrige el siguiente texto o examen:
 
 ${texto}`;
 
-const promptSintaxis = `Actúa como profesor experto de Lengua Castellana en España, especializado en análisis sintáctico.
+    const promptSintaxis = `Actúa como profesor experto de Lengua Castellana en España, especializado en análisis sintáctico.
 
 Corrige un examen de sintaxis con rigor académico.
 
@@ -54,7 +55,7 @@ Corrige este examen:
 
 ${texto}`;
 
-const promptRedaccion = `Actúa como profesor de Lengua Castellana en España.
+    const promptRedaccion = `Actúa como profesor de Lengua Castellana en España.
 
 Corrige una redacción de alumno.
 
@@ -69,7 +70,7 @@ Texto:
 
 ${texto}`;
 
-const promptComentario = `Actúa como profesor de Lengua Castellana en España.
+    const promptComentario = `Actúa como profesor de Lengua Castellana en España.
 
 Corrige un comentario de texto.
 
@@ -85,7 +86,7 @@ Texto del alumno:
 
 ${texto}`;
 
-const promptExamen = `Actúa como profesor de Lengua Castellana en España.
+    const promptExamen = `Actúa como profesor de Lengua Castellana en España.
 
 Evalúa un examen completo.
 
@@ -94,40 +95,6 @@ TAREAS:
 2. Identifica la respuesta del alumno
 3. Corrige cada respuesta
 4. Da una puntuación por pregunta
-5. Calcula una NOTA FINAL sobre 10
-6. Explica los errores de forma clara y pedagógica
-
-Texto del examen:
-
-${texto}`;
-
-let prompt = promptGeneral;
-
-if (modo === "sintaxis") prompt = promptSintaxis;
-if (modo === "redaccion") prompt = promptRedaccion;
-if (modo === "comentario") prompt = promptComentario;
-if (modo === "examen") prompt = promptExamen;
-    
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [
-          {
-            role: "user",
-            content: prompt
-
-Evalúa un examen completo.
-
-TAREAS:
-1. Detecta automáticamente cada pregunta
-2. Identifica la respuesta del alumno
-3. Corrige cada respuesta
-4. Da una puntuación por pregunta (puede tener decimal)
 5. Calcula una NOTA FINAL sobre 10
 6. Explica los errores de forma clara y pedagógica
 
@@ -159,14 +126,49 @@ REGLAS:
 - No inventes contenido
 - Sé justo como un profesor real
 - Usa lenguaje claro y profesional
-- Si falta información, indícalo`
+- Si falta información, indícalo`;
+
+    let prompt = promptGeneral;
+
+    if (modo === "sintaxis") prompt = promptSintaxis;
+    if (modo === "redaccion") prompt = promptRedaccion;
+    if (modo === "comentario") prompt = promptComentario;
+    if (modo === "examen") prompt = promptExamen;
+
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "user",
+            content: prompt
           }
         ]
       })
     });
-const promptSintaxis = `Actúa como profesor experto de Lengua Castellana en España, especializado en análisis sintáctico.
 
-Corrige un examen de sintaxis con rigor académico.
+    const data = await response.json();
+
+    if (data.error) {
+      console.error("ERROR OPENAI:", data.error);
+      return res.json({
+        resultado: "Error OpenAI: " + data.error.message
+      });
+    }
+
+    res.json({
+      resultado: data.choices?.[0]?.message?.content || "OpenAI no devolvió contenido"
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error en el servidor" });
+  }
+});
 
 📘 INFORME DE SINTAXIS
 
