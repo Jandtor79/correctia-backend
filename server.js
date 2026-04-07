@@ -49,6 +49,17 @@ INSTRUCCIONES:
 7. Da una nota por pregunta
 8. Calcula una NOTA FINAL sobre 10
 
+Si la respuesta del alumno presenta la sintaxis en esquema, en cajones, por bloques o con etiquetas visuales, interpreta esa estructura antes de corregir.
+
+Debes:
+- reconstruir la organización del análisis
+- identificar qué función sintáctica asigna el alumno a cada bloque
+- comprobar si cada bloque está bien clasificado
+- corregir con precisión
+- explicar claramente los errores
+- ofrecer el análisis correcto final de forma ordenada
+
+Si el esquema es incompleto, confuso o ilegible, indícalo expresamente y corrige solo lo que pueda inferirse con seguridad.
 Corrige este examen:
 
 ${texto}`;
