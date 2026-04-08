@@ -294,7 +294,7 @@ app.post("/pdf", upload.single("pdf"), async (req, res) => {
 Corrige este examen extraído de un PDF.
 
 Texto del examen:
-${texto}`;
+${texto}`
           }
         ]
       })
@@ -346,7 +346,7 @@ app.post("/audio", upload.single("audio"), async (req, res) => {
             role: "user",
             content: `Corrige esta expresión oral, da feedback y nota:
 
-${texto}`;
+${texto}`
           }
         ]
       })
