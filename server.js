@@ -256,7 +256,7 @@ app.post("/pdf", upload.single("pdf"), async (req, res) => {
         messages: [
           {
             role: "user",
-            content:`Extrae TODO el texto de esta imagen y después evalúalo como examen de Lengua.
+            content: `Extrae TODO el texto de este PDF y después evalúalo como examen de Lengua.
 
 Si detectas análisis sintáctico, corrígelo con rigor.
 Si detectas un examen general, corrige por preguntas y puntúa.
@@ -265,7 +265,7 @@ Debes:
 1. Transcribir primero el contenido
 2. Detectar si es examen general o sintaxis
 3. Corregir de forma adecuada
-4. Poner nota`
+4. Poner nota
 
 Texto del examen:
 ${texto}`
@@ -318,9 +318,34 @@ app.post("/audio", upload.single("audio"), async (req, res) => {
         messages: [
           {
             role: "user",
-            content: `Corrige esta expresión oral, da feedback y nota:
+            content: `Actúa como profesor de Lengua Castellana en España.
 
+Has recibido una transcripción de una respuesta oral de un alumno.
+
+Tu tarea es:
+1. corregir la expresión oral
+2. señalar errores de contenido, gramática y claridad
+3. valorar si la respuesta está bien estructurada
+4. poner una nota sobre 10
+5. dar una explicación breve y pedagógica
+
+Transcripción del alumno:
 ${texto}`
+Resultado
+
+Así el audio queda alineado con tu producto:
+
+no “corrige por corregir”
+evalúa como profesor
+Resumen
+
+✔ El código está bien
+✔ No hay fallo de sintaxis
+✔ Puede arrancar así
+
+La mejora ya no es técnica, sino de enfoque pedagógico.
+
+Si quieres, te reviso ahora /imagen para dejar los tres endpoints (/pdf, /imagen, /audio) con el mismo nivel y la misma lógica.
           }
         ]
       })
