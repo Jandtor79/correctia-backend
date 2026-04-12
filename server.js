@@ -202,7 +202,7 @@ app.post("/imagen", upload.single("imagen"), async (req, res) => {
             content: [
               {
                 type: "text",
-               text: `Extrae TODO el texto de esta imagen y después evalúalo como examen de Lengua.
+                text: `Extrae TODO el texto de esta imagen y después evalúalo como examen de Lengua.
 
 Si detectas análisis sintáctico, corrígelo con rigor.
 Si detectas un examen general, corrige por preguntas y puntúa.
@@ -211,7 +211,7 @@ Debes:
 1. Transcribir primero el contenido
 2. Detectar si es examen general o sintaxis
 3. Corregir de forma adecuada
-4. Poner nota`
+4. Poner nota
 
 Formato claro y estructurado`
               },
