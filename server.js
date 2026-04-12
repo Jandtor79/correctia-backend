@@ -202,13 +202,16 @@ app.post("/imagen", upload.single("imagen"), async (req, res) => {
             content: [
               {
                 type: "text",
-                text: `Extrae TODO el texto de este examen y después corrígelo.
+               text: `Extrae TODO el texto de esta imagen y después evalúalo como examen de Lengua.
 
-INSTRUCCIONES:
-1. Transcribe primero el contenido
-2. Después corrige por preguntas
-3. Pon nota por pregunta
-4. Nota final sobre 10
+Si detectas análisis sintáctico, corrígelo con rigor.
+Si detectas un examen general, corrige por preguntas y puntúa.
+
+Debes:
+1. Transcribir primero el contenido
+2. Detectar si es examen general o sintaxis
+3. Corregir de forma adecuada
+4. Poner nota`
 
 Formato claro y estructurado`
               },
@@ -253,9 +256,16 @@ app.post("/pdf", upload.single("pdf"), async (req, res) => {
         messages: [
           {
             role: "user",
-            content: `Actúa como profesor de Lengua Castellana en España.
+            content:`Extrae TODO el texto de esta imagen y después evalúalo como examen de Lengua.
 
-Corrige este examen extraído de un PDF.
+Si detectas análisis sintáctico, corrígelo con rigor.
+Si detectas un examen general, corrige por preguntas y puntúa.
+
+Debes:
+1. Transcribir primero el contenido
+2. Detectar si es examen general o sintaxis
+3. Corregir de forma adecuada
+4. Poner nota`
 
 Texto del examen:
 ${texto}`
