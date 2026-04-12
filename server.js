@@ -24,115 +24,7 @@ app.get("/", (req, res) => {
 // CORREGIR TEXTO
 app.post("/corregir", async (req, res) => {
   try {
-    const { texto, modo } = req.body;
-
-const promptGeneral = `Actúa como profesor de Lengua Castellana en España.
-
-Corrige el siguiente texto o examen:
-
-${texto}`;
-
-const promptSintaxis = `Actúa como profesor experto de Lengua Castellana en España, especializado en análisis sintáctico.
-
-Corrige un examen de sintaxis con rigor académico.
-
-OBJETIVO:
-Evaluar y corregir análisis sintácticos realizados por un alumno.
-
-INSTRUCCIONES:
-1. Detecta automáticamente cada oración del examen
-2. Identifica la respuesta del alumno
-3. Corrige el análisis sintáctico de forma completa
-4. Señala errores concretos
-5. Explica por qué está mal y cuál es la opción correcta
-6. Proporciona el análisis correcto
-7. Da una nota por pregunta
-8. Calcula una NOTA FINAL sobre 10
-
-Si la respuesta del alumno presenta la sintaxis en esquema, en cajones, por bloques o con etiquetas visuales, interpreta esa estructura antes de corregir.
-
-Debes:
-- reconstruir la organización del análisis
-- identificar qué función sintáctica asigna el alumno a cada bloque
-- comprobar si cada bloque está bien clasificado
-- corregir con precisión
-- explicar claramente los errores
-- ofrecer el análisis correcto final de forma ordenada
-
-Si el esquema es incompleto, confuso o ilegible, indícalo expresamente y corrige solo lo que pueda inferirse con seguridad.
-
-Corrige este examen:
-
-${texto}`;
-
-const promptSintaxisVisual = `Actúa como profesor experto de Lengua Castellana en España, especializado en análisis sintáctico.
-
-El alumno ha realizado un análisis sintáctico en formato visual (cajones, esquemas, bloques o etiquetas).
-
-TU TAREA:
-1. Interpreta el esquema del alumno
-2. Reconstruye mentalmente la estructura sintáctica
-3. Identifica qué función ha asignado a cada elemento
-4. Comprueba si es correcto
-5. Detecta errores de clasificación o relación
-6. Explica los errores de forma clara
-7. Proporciona el análisis correcto completo
-
-IMPORTANTE:
-- No te limites al texto literal: interpreta la estructura
-- Si algo es ambiguo, indícalo
-- Corrige como un profesor de secundaria en España
-
-FORMATO:
-INFORME DE SINTAXIS (ESQUEMA)
-
-Interpretación del análisis del alumno:
-...
-
-Errores detectados:
-...
-
-Corrección:
-...
-
-Nota: X.X / 10
-
-Explicación:
-...
-
-Texto del alumno:
-${texto}`;
-
-const promptRedaccion = `Actúa como profesor de Lengua Castellana en España.
-
-Corrige una redacción de alumno.
-
-Debes:
-- corregir ortografía, gramática y expresión
-- señalar errores importantes
-- proponer mejoras de estilo
-- poner una nota final sobre 10
-- explicar cómo mejorar
-
-Texto:
-
-${texto}`;
-
-const promptComentario = `Actúa como profesor de Lengua Castellana en España.
-
-Corrige un comentario de texto.
-
-Debes:
-- valorar comprensión
-- valorar estructura
-- valorar expresión escrita
-- señalar errores
-- poner nota final sobre 10
-- dar orientación para mejorar
-
-Texto del alumno:
-
-${texto}`;
+   const { texto, modo } = req.body;
 
 const promptExamen = `Actúa como profesor de Lengua Castellana en España.
 
@@ -158,11 +50,17 @@ Evaluación por preguntas:
 Pregunta 1:
 - Respuesta del alumno: ...
 - Corrección: ...
+- Errores:
+  1. ...
+  2. ...
 - Nota: X.X / 10
 
 Pregunta 2:
 - Respuesta del alumno: ...
 - Corrección: ...
+- Errores:
+  1. ...
+  2. ...
 - Nota: X.X / 10
 
 Nota final: X.X / 10
@@ -174,15 +72,81 @@ REGLAS:
 - No inventes contenido
 - Sé justo como un profesor real
 - Usa lenguaje claro y profesional
-- Si falta información, indícalo`;
+- Si una respuesta está incompleta, indícalo`;
 
-let prompt = promptGeneral;
+const promptSintaxis = `Actúa como profesor experto de Lengua Castellana en España, especializado en análisis sintáctico.
 
-    if (modo === "sintaxis") prompt = promptSintaxis;
-    if (modo === "sintaxis_visual") prompt = promptSintaxisVisual;
-    if (modo === "redaccion") prompt = promptRedaccion;
-    if (modo === "comentario") prompt = promptComentario;
-    if (modo === "examen") prompt = promptExamen;
+Corrige un examen de sintaxis con rigor académico.
+
+OBJETIVO:
+Evaluar y corregir análisis sintácticos realizados por un alumno.
+
+CRITERIOS DE CORRECCIÓN:
+- identificación correcta del sujeto
+- tipo de predicado
+- núcleos
+- complementos (CD, CI, CC, atributo, CRV, etc.)
+- precisión terminológica
+- análisis completo y ordenado
+
+INSTRUCCIONES:
+1. Detecta automáticamente cada oración del examen
+2. Identifica la respuesta del alumno
+3. Corrige el análisis sintáctico de forma completa
+4. Señala errores concretos
+5. Explica por qué está mal y cuál es la opción correcta
+6. Proporciona el análisis correcto
+7. Da una nota por pregunta
+8. Calcula una NOTA FINAL sobre 10
+
+Corrige este examen:
+
+${texto}`;
+
+const promptSintaxisVisual = `Actúa como profesor experto de Lengua Castellana en España, especializado en análisis sintáctico.
+
+El alumno ha realizado un análisis sintáctico en formato visual: cajones, esquemas, bloques o etiquetas.
+
+TU TAREA:
+1. Interpreta el esquema del alumno
+2. Reconstruye la estructura sintáctica
+3. Identifica la función asignada a cada elemento
+4. Comprueba si es correcta
+5. Detecta errores de clasificación o relación
+6. Explica los errores con claridad
+7. Proporciona el análisis correcto completo
+
+IMPORTANTE:
+- No te limites al texto literal: interpreta la estructura
+- Si algo es ambiguo, indícalo
+- Si el esquema es incompleto o confuso, corrige solo lo que pueda inferirse con seguridad
+- Corrige como un profesor de secundaria en España
+
+FORMATO:
+INFORME DE SINTAXIS VISUAL
+
+Interpretación del análisis del alumno:
+...
+
+Errores detectados:
+...
+
+Corrección:
+...
+
+Nota: X.X / 10
+
+Explicación:
+...
+
+Texto del alumno:
+${texto}`;
+
+let prompt = promptExamen;
+
+if (modo === "sintaxis") prompt = promptSintaxis;
+if (modo === "sintaxis_visual") prompt = promptSintaxisVisual;
+if (modo === "examen") prompt = promptExamen;
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
