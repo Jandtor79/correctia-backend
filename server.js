@@ -72,7 +72,12 @@ REGLAS:
 - No inventes contenido
 - Sé justo como un profesor real
 - Usa lenguaje claro y profesional
-- Si una respuesta está incompleta, indícalo`;
+- Si una respuesta está incompleta, indícalo
+Incluye al final:
+
+🧠 Cómo mejorar:
+- 2 consejos concretos
+- 1 error clave a evitar`;
 
 const promptSintaxis = `Actúa como profesor experto de Lengua Castellana en España, especializado en análisis sintáctico.
 
@@ -101,7 +106,12 @@ INSTRUCCIONES:
 
 Corrige este examen:
 
-${texto}`;
+${texto} 
+Incluye al final:
+
+🧠 Cómo mejorar:
+- 2 consejos concretos
+- 1 error clave a evitar`;
 
 const promptSintaxisVisual = `Actúa como profesor experto de Lengua Castellana en España, especializado en análisis sintáctico.
 
@@ -140,7 +150,12 @@ Explicación:
 ...
 
 Texto del alumno:
-${texto}`;
+${texto}
+Incluye al final:
+
+🧠 Cómo mejorar:
+- 2 consejos concretos
+- 1 error clave a evitar`;
 
 let prompt = promptExamen;
 
