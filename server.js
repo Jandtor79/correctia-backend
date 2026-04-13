@@ -331,21 +331,6 @@ Tu tarea es:
 
 Transcripción del alumno:
 ${texto}`
-Resultado
-
-Así el audio queda alineado con tu producto:
-
-no “corrige por corregir”
-evalúa como profesor
-Resumen
-
-✔ El código está bien
-✔ No hay fallo de sintaxis
-✔ Puede arrancar así
-
-La mejora ya no es técnica, sino de enfoque pedagógico.
-
-Si quieres, te reviso ahora /imagen para dejar los tres endpoints (/pdf, /imagen, /audio) con el mismo nivel y la misma lógica.
           }
         ]
       })
