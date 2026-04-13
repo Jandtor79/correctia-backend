@@ -131,6 +131,7 @@ IMPORTANTE:
 - Si algo es ambiguo, indícalo
 - Si el esquema es incompleto o confuso, corrige solo lo que pueda inferirse con seguridad
 - Corrige como un profesor de secundaria en España
+- Si es posible, representa el análisis correcto en forma de esquema textual claro, por niveles.
 
 FORMATO:
 INFORME DE SINTAXIS VISUAL
