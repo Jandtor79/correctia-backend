@@ -198,6 +198,57 @@ if (modo === "examen") prompt = promptExamen;
   }
 });
 
+app.post("/matizar", async (req, res) => {
+  try {
+    const { texto, resultado, comentario } = req.body;
+
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "user",
+            content: `Actúa como profesor de Lengua Castellana en España.
+
+Has corregido previamente este examen:
+
+${resultado}
+
+Texto original del alumno:
+${texto}
+
+El profesor o alumno añade esta revisión:
+"${comentario}"
+
+Tu tarea:
+- reconsiderar la corrección
+- ajustar la nota si procede
+- explicar claramente el cambio
+- mantener criterio académico
+
+Devuelve la corrección actualizada completa.`
+          }
+        ]
+      })
+    });
+
+    const data = await response.json();
+
+    res.json({
+      resultado: data.choices?.[0]?.message?.content || "Sin respuesta"
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error en matización" });
+  }
+});
+
 // IMAGEN
 app.post("/imagen", upload.single("imagen"), async (req, res) => {
   try {
