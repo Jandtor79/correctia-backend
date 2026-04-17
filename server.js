@@ -209,6 +209,11 @@ app.post("/matizar", async (req, res) => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
+  texto,
+  modo: modoProfesor,
+  nivel: "3ESO"
+})
+      body: JSON.stringify({
         model: "gpt-4o-mini",
         messages: [
           {
