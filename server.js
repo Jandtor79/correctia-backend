@@ -7,10 +7,6 @@ import pdfParse from "pdf-parse";
 
 const app = express();
 
-app.get("/health", (req, res) => {
-  res.status(200).send("ok");
-});
-
 app.set("trust proxy", 1);
 app.use(cors());
 app.use(express.json());
@@ -21,12 +17,12 @@ app.get("/", (req, res) => {
   res.send("Backend funcionando");
 });
 
-// CORREGIR TEXTO
-app.post("/corregir", async (req, res) => {
-  try {
-   const { texto, modo } = req.body;
+app.get("/health", (req, res) => {
+  res.status(200).send("ok");
+});
 
-const promptExamen = `Actúa como profesor de Lengua Castellana en España.
+const getPrompt = (modo = "examen", texto = "") => {
+  const promptExamen = `Actúa como profesor de Lengua Castellana en España.
 
 Evalúa un examen completo.
 
@@ -73,13 +69,12 @@ REGLAS:
 - Sé justo como un profesor real
 - Usa lenguaje claro y profesional
 - Si una respuesta está incompleta, indícalo
-Incluye al final:
+- Incluye al final:
+  Cómo mejorar:
+  - 2 consejos concretos
+  - 1 error clave a evitar`;
 
-🧠 Cómo mejorar:
-- 2 consejos concretos
-- 1 error clave a evitar`;
-
-const promptSintaxis = `Actúa como profesor experto de Lengua Castellana en España, especializado en análisis sintáctico.
+  const promptSintaxis = `Actúa como profesor experto de Lengua Castellana en España, especializado en análisis sintáctico.
 
 Corrige un examen de sintaxis con rigor académico.
 
@@ -106,14 +101,14 @@ INSTRUCCIONES:
 
 Corrige este examen:
 
-${texto} 
-Incluye al final:
+${texto}
 
-🧠 Cómo mejorar:
+Incluye al final:
+Cómo mejorar:
 - 2 consejos concretos
 - 1 error clave a evitar`;
 
-const promptSintaxisVisual = `Actúa como profesor experto de Lengua Castellana en España, especializado en análisis sintáctico.
+  const promptSintaxisVisual = `Actúa como profesor experto de Lengua Castellana en España, especializado en análisis sintáctico.
 
 El alumno ha realizado un análisis sintáctico en formato visual: cajones, esquemas, bloques o etiquetas.
 
@@ -131,7 +126,7 @@ IMPORTANTE:
 - Si algo es ambiguo, indícalo
 - Si el esquema es incompleto o confuso, corrige solo lo que pueda inferirse con seguridad
 - Corrige como un profesor de secundaria en España
-- Si es posible, representa el análisis correcto en forma de esquema textual claro, por niveles.
+- Si es posible, representa el análisis correcto en forma de esquema textual claro, por niveles
 
 FORMATO:
 INFORME DE SINTAXIS VISUAL
@@ -152,49 +147,59 @@ Explicación:
 
 Texto del alumno:
 ${texto}
-Incluye al final:
 
-🧠 Cómo mejorar:
+Incluye al final:
+Cómo mejorar:
 - 2 consejos concretos
 - 1 error clave a evitar`;
 
-let prompt = promptExamen;
+  if (modo === "sintaxis") return promptSintaxis;
+  if (modo === "sintaxis_visual") return promptSintaxisVisual;
+  return promptExamen;
+};
 
-if (modo === "sintaxis") prompt = promptSintaxis;
-if (modo === "sintaxis_visual") prompt = promptSintaxisVisual;
-if (modo === "examen") prompt = promptExamen;
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [
-          {
-            role: "user",
-            content: prompt
-          }
-        ]
-      })
-    });
+const callOpenAIText = async (prompt) => {
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "user",
+          content: prompt
+        }
+      ]
+    })
+  });
 
-    const data = await response.json();
+  const data = await response.json();
 
-    if (data.error) {
-      console.error("ERROR OPENAI:", data.error);
-      return res.json({
-        resultado: "Error OpenAI: " + data.error.message
-      });
+  if (!response.ok) {
+    throw new Error(data?.error?.message || "Error al contactar con OpenAI");
+  }
+
+  return data.choices?.[0]?.message?.content || "Sin respuesta";
+};
+
+app.post("/corregir", async (req, res) => {
+  try {
+    const { texto, modo } = req.body;
+
+    if (!texto || !texto.trim()) {
+      return res.status(400).json({ error: "No se ha recibido texto para corregir" });
     }
 
-    res.json({
-      resultado: data.choices?.[0]?.message?.content || "OpenAI no devolvió contenido"
-    });
+    const prompt = getPrompt(modo, texto);
+    const resultado = await callOpenAIText(prompt);
+
+    res.json({ resultado });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error en el servidor" });
+    console.error("ERROR /corregir:", error);
+    res.status(500).json({ error: error.message || "Error en el servidor" });
   }
 });
 
@@ -202,23 +207,11 @@ app.post("/matizar", async (req, res) => {
   try {
     const { texto, resultado, comentario } = req.body;
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-  texto,
-  modo: modoProfesor,
-  nivel: "3ESO"
-})
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [
-          {
-            role: "user",
-            content: `Actúa como profesor de Lengua Castellana en España.
+    if (!texto || !resultado || !comentario) {
+      return res.status(400).json({ error: "Faltan datos para matizar la corrección" });
+    }
+
+    const prompt = `Actúa como profesor de Lengua Castellana en España.
 
 Has corregido previamente este examen:
 
@@ -236,29 +229,40 @@ Tu tarea:
 - explicar claramente el cambio
 - mantener criterio académico
 
-Devuelve la corrección actualizada completa.`
-          }
-        ]
-      })
-    });
+Devuelve la corrección actualizada completa.`;
 
-    const data = await response.json();
+    const nuevoResultado = await callOpenAIText(prompt);
 
     res.json({
-      resultado: data.choices?.[0]?.message?.content || "Sin respuesta"
+      resultado: nuevoResultado
     });
-
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error en matización" });
+    console.error("ERROR /matizar:", error);
+    res.status(500).json({ error: error.message || "Error en matización" });
   }
 });
 
-// IMAGEN
 app.post("/imagen", upload.single("imagen"), async (req, res) => {
   try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No se ha recibido ninguna imagen" });
+    }
+
+    const modo = req.body?.modo || "examen";
     const imagePath = req.file.path;
     const imageBase64 = fs.readFileSync(imagePath, { encoding: "base64" });
+
+    const prompt = `Extrae TODO el texto de esta imagen y después corrígelo en modo ${modo}.
+
+Si el modo es "sintaxis", corrige análisis sintáctico.
+Si el modo es "sintaxis_visual", interpreta cajones, esquemas o bloques.
+Si el modo es "examen", corrige por preguntas y puntúa.
+
+Debes:
+1. Transcribir primero el contenido
+2. Corregir según el modo indicado
+3. Poner nota
+4. Explicar errores con claridad`;
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
@@ -274,18 +278,7 @@ app.post("/imagen", upload.single("imagen"), async (req, res) => {
             content: [
               {
                 type: "text",
-                text: `Extrae TODO el texto de esta imagen y después evalúalo como examen de Lengua.
-
-Si detectas análisis sintáctico, corrígelo con rigor.
-Si detectas un examen general, corrige por preguntas y puntúa.
-
-Debes:
-1. Transcribir primero el contenido
-2. Detectar si es examen general o sintaxis
-3. Corregir de forma adecuada
-4. Poner nota
-
-Formato claro y estructurado`
+                text: prompt
               },
               {
                 type: "image_url",
@@ -301,67 +294,51 @@ Formato claro y estructurado`
 
     const data = await response.json();
 
+    if (!response.ok) {
+      throw new Error(data?.error?.message || "Error al procesar la imagen con OpenAI");
+    }
+
     res.json({
       resultado: data.choices?.[0]?.message?.content || "Sin respuesta"
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error procesando imagen" });
+    console.error("ERROR /imagen:", error);
+    res.status(500).json({ error: error.message || "Error procesando imagen" });
   }
 });
 
-// PDF
 app.post("/pdf", upload.single("pdf"), async (req, res) => {
   try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No se ha recibido ningún PDF" });
+    }
+
+    const modo = req.body?.modo || "examen";
     const dataBuffer = fs.readFileSync(req.file.path);
     const pdfData = await pdfParse(dataBuffer);
-    const texto = pdfData.text;
+    const texto = pdfData.text?.trim();
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [
-          {
-            role: "user",
-            content: `Extrae TODO el texto de este PDF y después evalúalo como examen de Lengua.
+    if (!texto) {
+      return res.status(400).json({ error: "No se ha podido extraer texto del PDF" });
+    }
 
-Si detectas análisis sintáctico, corrígelo con rigor.
-Si detectas un examen general, corrige por preguntas y puntúa.
+    const prompt = getPrompt(modo, texto);
+    const resultado = await callOpenAIText(prompt);
 
-Debes:
-1. Transcribir primero el contenido
-2. Detectar si es examen general o sintaxis
-3. Corregir de forma adecuada
-4. Poner nota
-
-Texto del examen:
-${texto}`
-          }
-        ]
-      })
-    });
-
-    const data = await response.json();
-
-    res.json({
-      resultado: data.choices?.[0]?.message?.content || "Sin respuesta"
-    });
+    res.json({ resultado });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error procesando PDF" });
+    console.error("ERROR /pdf:", error);
+    res.status(500).json({ error: error.message || "Error procesando PDF" });
   }
 });
 
-// AUDIO
 app.post("/audio", upload.single("audio"), async (req, res) => {
   try {
-    const path = req.file.path;
+    if (!req.file) {
+      return res.status(400).json({ error: "No se ha recibido ningún audio" });
+    }
 
+    const path = req.file.path;
     const FormData = (await import("form-data")).default;
     const formData = new FormData();
 
@@ -377,20 +354,14 @@ app.post("/audio", upload.single("audio"), async (req, res) => {
     });
 
     const transcriptionData = await transcriptionRes.json();
-    const texto = transcriptionData.text;
 
-    const correctionRes = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [
-          {
-            role: "user",
-            content: `Actúa como profesor de Lengua Castellana en España.
+    if (!transcriptionRes.ok) {
+      throw new Error(transcriptionData?.error?.message || "Error al transcribir el audio");
+    }
+
+    const texto = transcriptionData.text || "";
+
+    const prompt = `Actúa como profesor de Lengua Castellana en España.
 
 Has recibido una transcripción de una respuesta oral de un alumno.
 
@@ -402,20 +373,16 @@ Tu tarea es:
 5. dar una explicación breve y pedagógica
 
 Transcripción del alumno:
-${texto}`
-          }
-        ]
-      })
-    });
+${texto}`;
 
-    const correctionData = await correctionRes.json();
+    const resultadoCorreccion = await callOpenAIText(prompt);
 
     res.json({
-      resultado: `Transcripción:\n${texto}\n\n${correctionData.choices?.[0]?.message?.content || ""}`
+      resultado: `Transcripción:\n${texto}\n\n${resultadoCorreccion}`
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error procesando audio" });
+    console.error("ERROR /audio:", error);
+    res.status(500).json({ error: error.message || "Error procesando audio" });
   }
 });
 
