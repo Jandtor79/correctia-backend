@@ -22,7 +22,7 @@ app.get("/health", (req, res) => {
 });
 
 const getPrompt = (modo = "examen", texto = "") => {
-  const promptExamen = `Actúa como profesor de Lengua Castellana en España.
+  const promptExamen = `Actúa como profesor de Lengua en ${nivel} en España.
 
 Evalúa un examen completo.
 
